@@ -2,7 +2,7 @@ name: Java+Gradle tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
 
 jobs:
   run_tests:
