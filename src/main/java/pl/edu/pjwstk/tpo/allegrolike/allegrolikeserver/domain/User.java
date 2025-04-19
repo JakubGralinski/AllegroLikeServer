@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver;
+package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain;
 
 import jakarta.persistence.*;
 

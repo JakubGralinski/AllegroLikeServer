@@ -14,15 +14,20 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private final String jwtSecret = "fraza";
-    private final long jwtExpirationMs = 86400000; // 1 day
+    private final JwtConfig jwtConfig;
 
-    // One key for instance
-    private final Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    private final Key key;
+
+    public JwtProvider(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+
+        // One key for instance
+        this.key = Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(Authentication authentication) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpirationMs);
+        Date expiry = new Date(now.getTime() + jwtConfig.getExpirationMs());
 
         return Jwts.builder()
                 .setSubject(authentication.getName())

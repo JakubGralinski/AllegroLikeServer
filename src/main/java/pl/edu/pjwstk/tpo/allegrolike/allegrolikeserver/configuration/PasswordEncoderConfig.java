@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver;
+package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
