@@ -8,7 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtProvider;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtResponse;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.User;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
 import java.util.Optional;
 
@@ -20,9 +24,16 @@ public class AuthServiceImpl
 
     private final JwtProvider jwtProvider;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+    private final UserService userService;
+
+    public AuthServiceImpl(
+            AuthenticationManager authenticationManager,
+            JwtProvider jwtProvider,
+            UserService userService
+    ) {
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
+        this.userService = userService;
     }
 
     @Override
@@ -43,5 +54,16 @@ public class AuthServiceImpl
         final String token = jwtProvider.generateToken(auth);
         final JwtResponse jwtResponse = new JwtResponse(token);
         return Optional.of(jwtResponse);
+    }
+
+    @Override
+    public Optional<JwtResponse> register(Role role, UserDTO userDto) {
+        Optional<User> createdUser = userService.createUser(userDto, role);
+
+        if (createdUser.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.authenticate(userDto.getUsername(), userDto.getPassword());
     }
 }
