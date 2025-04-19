@@ -2,37 +2,45 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.UserDTO;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtProvider;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtResponse;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.LoginRequest;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            JwtProvider jwtProvider
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid UserDTO userDTO) {
-        if (userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username already exists");
-        }
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(
+            @RequestBody @Valid LoginRequest loginRequest
+    ) {
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
 
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.USER);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
-        userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        String token = jwtProvider.generateToken(auth);
+
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 }
