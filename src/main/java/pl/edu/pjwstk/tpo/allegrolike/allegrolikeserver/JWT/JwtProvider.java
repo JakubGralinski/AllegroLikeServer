@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,10 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim("role", authentication.getAuthorities()
+                                                .stream()
+                                                .map(GrantedAuthority::getAuthority)
+                                                .toList())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS512)
