@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: AllegroLikeServer
+  datasource:
+    url: jdbc:mysql://localhost:3306/${MYSQL_DB:AllegroLikeDb}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+jwt:
+  secret-key: ${JWT_SECRET:jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=}
+  expiration-ms: {JWT_EXPIRATION:86400000}
+

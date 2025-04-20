@@ -2,45 +2,49 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtProvider;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtResponse;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.LoginRequest;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.LoginRequest;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
+    private final AuthService authService;
 
-    public AuthController(
-            AuthenticationManager authenticationManager,
-            JwtProvider jwtProvider
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.jwtProvider = jwtProvider;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(
+    public ResponseEntity<?> login(
             @RequestBody @Valid LoginRequest loginRequest
     ) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
+        final Optional<JwtResponse> response = this.authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
 
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        if (response.isPresent()) {
+            return ResponseEntity.ok(response.get());
+        } else {
+            return ResponseEntity.badRequest().body("Authentication failed");
+        }
+    }
 
-        String token = jwtProvider.generateToken(auth);
+    @PostMapping("/registerUser")
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDTO userDto) {
+        final Optional<JwtResponse> registeredResponse = this.authService.register(Role.ROLE_USER, userDto);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        if (registeredResponse.isPresent()) {
+            return ResponseEntity.ok(registeredResponse.get());
+        } else {
+            return ResponseEntity.badRequest().body("Provided username is already taken");
+        }
     }
 }
