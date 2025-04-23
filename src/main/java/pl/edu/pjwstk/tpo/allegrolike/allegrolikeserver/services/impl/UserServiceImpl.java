@@ -1,10 +1,10 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
 import org.springframework.stereotype.Service;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.UserMapper;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
@@ -23,8 +23,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> createUser(UserDTO userDto, Role role) {
-        final User user = this.userMapper.mapToEntity(userDto, role);
+    public Optional<User> createUser(RegisterRequestDto registerRequestDto, Role role) {
+        final User user = this.userMapper.mapToEntity(registerRequestDto, role);
         if (this.userRepository.findByUsername(user.getUsername())
                                .isPresent()
         ) {

@@ -1,4 +1,4 @@
-package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT;
+package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

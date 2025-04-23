@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtResponse;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.LoginRequest;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.LoginRequestDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.JwtResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
 
 import java.util.Optional;
@@ -26,9 +26,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody @Valid LoginRequest loginRequest
+            @RequestBody @Valid LoginRequestDto loginRequestDto
     ) {
-        final Optional<JwtResponse> response = this.authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+        final Optional<JwtResponseDto> response = this.authService.authenticate(loginRequestDto.getUsername(), loginRequestDto.getPassword());
 
         if (response.isPresent()) {
             return ResponseEntity.ok(response.get());
@@ -38,8 +38,8 @@ public class AuthController {
     }
 
     @PostMapping("/registerUser")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid UserDTO userDto) {
-        final Optional<JwtResponse> registeredResponse = this.authService.register(Role.ROLE_USER, userDto);
+    public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
+        final Optional<JwtResponseDto> registeredResponse = this.authService.register(Role.ROLE_USER, registerRequestDto);
 
         if (registeredResponse.isPresent()) {
             return ResponseEntity.ok(registeredResponse.get());

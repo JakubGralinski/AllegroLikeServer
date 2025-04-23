@@ -6,11 +6,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtProvider;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.JWT.JwtResponse;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.JwtResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.jwt.JwtProvider;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
@@ -37,7 +37,7 @@ public class AuthServiceImpl
     }
 
     @Override
-    public Optional<JwtResponse> authenticate(String username, String password) {
+    public Optional<JwtResponseDto> authenticate(String username, String password) {
         final Authentication auth;
         try {
             auth = authenticationManager.authenticate(
@@ -52,18 +52,18 @@ public class AuthServiceImpl
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         final String token = jwtProvider.generateToken(auth);
-        final JwtResponse jwtResponse = new JwtResponse(token);
+        final JwtResponseDto jwtResponse = new JwtResponseDto(token);
         return Optional.of(jwtResponse);
     }
 
     @Override
-    public Optional<JwtResponse> register(Role role, UserDTO userDto) {
-        Optional<User> createdUser = userService.createUser(userDto, role);
+    public Optional<JwtResponseDto> register(Role role, RegisterRequestDto registerRequestDto) {
+        Optional<User> createdUser = userService.createUser(registerRequestDto, role);
 
         if (createdUser.isEmpty()) {
             return Optional.empty();
         }
 
-        return this.authenticate(userDto.getUsername(), userDto.getPassword());
+        return this.authenticate(registerRequestDto.getUsername(), registerRequestDto.getPassword());
     }
 }

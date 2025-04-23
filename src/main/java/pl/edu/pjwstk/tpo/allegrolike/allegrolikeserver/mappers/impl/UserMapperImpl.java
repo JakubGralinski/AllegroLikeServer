@@ -2,10 +2,10 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.impl;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.UserMapper;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 
 @Component
 public class UserMapperImpl implements UserMapper {
@@ -17,11 +17,11 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public User mapToEntity(UserDTO userDto, Role role) {
+    public User mapToEntity(RegisterRequestDto registerRequestDto, Role role) {
         final User user = new User();
-        final String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        final String encodedPassword = passwordEncoder.encode(registerRequestDto.getPassword());
         user.setRole(role);
-        user.setUsername(userDto.getUsername());
+        user.setUsername(registerRequestDto.getUsername());
         user.setPassword(encodedPassword);
         return user;
     }

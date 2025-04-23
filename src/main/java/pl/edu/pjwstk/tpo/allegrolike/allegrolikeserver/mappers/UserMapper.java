@@ -1,10 +1,10 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers;
 
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.domain.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.UserDTO;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 
 public interface UserMapper {
 
-    User mapToEntity(UserDTO userDto, Role role);
+    User mapToEntity(RegisterRequestDto registerRequestDto, Role role);
 }
