@@ -23,6 +23,7 @@ public class UserMapperImpl implements UserMapper {
         final String encodedPassword = passwordEncoder.encode(registerRequestDto.getPassword());
         user.setRole(role);
         user.setUsername(registerRequestDto.getUsername());
+        user.setEmail(registerRequestDto.getEmail());
         user.setPassword(encodedPassword);
         return user;
     }

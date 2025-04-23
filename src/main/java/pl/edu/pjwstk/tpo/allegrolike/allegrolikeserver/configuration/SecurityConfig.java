@@ -11,9 +11,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.jwt.JwtFilter;
 
 import java.util.List;
 
@@ -22,8 +24,14 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private final JwtFilter jwtFilter;
+
     @Value("${cors.client-origin}")
     private String clientOrigin;
+
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-                );
+                ).addFilterBefore(this.jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

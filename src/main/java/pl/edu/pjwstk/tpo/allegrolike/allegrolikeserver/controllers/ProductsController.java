@@ -21,6 +21,7 @@ public class ProductsController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
+        System.out.println("getAllProducts");
         final List<ProductResponseDto> products = this.productService.getAllProducts();
         return ResponseEntity.ok(products);
     }

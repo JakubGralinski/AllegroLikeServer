@@ -1,4 +1,5 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 // for registration
@@ -6,6 +7,10 @@ import jakarta.validation.constraints.NotBlank;
 public class RegisterRequestDto {
     @NotBlank(message = "Username is required")
     private String username;
+
+    @NotBlank(message = "Email is required")
+    @Email
+    private String email;
 
     @NotBlank(message = "Password is required")
     private String password;
@@ -21,5 +26,13 @@ public class RegisterRequestDto {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
