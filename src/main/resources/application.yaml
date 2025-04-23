@@ -17,3 +17,6 @@ jwt:
   secret-key: ${JWT_SECRET:jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=jL32yEMFfkfXpJnwFVYfJyTgy8hEsyuDqxJeqflOTZw=}
   expiration-ms: {JWT_EXPIRATION:86400000}
 
+cors:
+  client-origin: http://localhost:5173
+
