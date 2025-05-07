@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"jagna\",\n    \"email\": \"jagna\",\n    \"password\": \"jagna\"\n}",
+							"raw": "{\n    \"username\": \"admin2\",\n    \"email\": \"admin2@gmail.com\",\n    \"password\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -30,8 +30,18 @@
 				{
 					"name": "Login",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin2\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/login"
 					},
 					"response": []
 				}
@@ -44,7 +54,14 @@
 					"name": "Get all products",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NDY2NTAyODgsImV4cCI6MTc0NjczNjY4OH0.Yp60t_muOavPpPUVKcbegdJ1E92BFAPQO2HQQZPCVgRylvzntul9YPYLliQLi0gO9rX2XjpIhX9jdo71B0IWug",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/products"
 					},
 					"response": []
 				},
@@ -106,11 +123,11 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWduYSIsInJvbGUiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjY1MTgzNywiZXhwIjoxNzQ2NzM4MjM3fQ.PRoqL2bt7qapLSMRWVB4wY0HfF0k2BiNyJMNMzQ88LASZlGNUp6MGZOZwmV6Eu95mHwRycl563tdj1vdSPSVLQ",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NDY2NTIzNDUsImV4cCI6MTc0NjczODc0NX0.p70pnh56sw0vhm8I87jnPy78suBDUMX-5lNqTG-dGwd5nTqr4RArb7LPJGywQJQHY2mkjVR9TYvC2vsSfuRYDw",
 								"type": "text"
 							}
 						],
-						"url": "{{baseUrl}}/products/1"
+						"url": "{{baseUrl}}/products/2"
 					},
 					"response": []
 				},
