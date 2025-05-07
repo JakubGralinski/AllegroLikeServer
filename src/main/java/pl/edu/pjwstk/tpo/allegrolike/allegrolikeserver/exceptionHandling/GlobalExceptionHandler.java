@@ -1,0 +1,31 @@
+package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptionHandling;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.ForbiddenException;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    private final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFoundException(NotFoundException ex) {
+        log.info(ex.getMessage());
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenException.class)
+    public String handleForbiddenException(ForbiddenException ex) {
+        log.info(ex.getMessage());
+        return ex.getMessage();
+    }
+
+}

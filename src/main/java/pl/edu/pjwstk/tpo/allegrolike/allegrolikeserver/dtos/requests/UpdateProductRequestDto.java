@@ -1,15 +1,28 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.math.BigDecimal;
 
 public class UpdateProductRequestDto {
 
+    @NotBlank
+    @Size(max = 100)
     private String name;
 
+    @NotBlank
+    @Size(max = 1000)
     private String description;
 
+    @NotNull
+    @Positive
     private BigDecimal price;
 
+    @NotNull
+    @Positive
     private Integer stockQuantity;
 
     public UpdateProductRequestDto() {

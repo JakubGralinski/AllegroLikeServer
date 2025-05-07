@@ -1,36 +1,50 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.math.BigDecimal;
 
 public class CreateProductRequestDto {
 
-    private String title;
+    @NotBlank
+    @Size(max = 100)
+    private String name;
 
+    @NotBlank
+    @Size(max = 1000)
     private String description;
 
+    @NotNull
+    @Positive
     private BigDecimal price;
 
+    @NotNull
+    @Positive
     private Integer stockQuantity;
 
+    @NotNull
     private Long sellerId;
 
     public CreateProductRequestDto() {
     }
 
-    public CreateProductRequestDto(String title, String description, BigDecimal price, Integer stockQuantity, Long sellerId) {
-        this.title = title;
+    public CreateProductRequestDto(String name, String description, BigDecimal price, Integer stockQuantity, Long sellerId) {
+        this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.sellerId = sellerId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
