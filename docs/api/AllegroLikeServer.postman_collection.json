@@ -1,0 +1,203 @@
+{
+	"info": {
+		"_postman_id": "f980b76f-28ab-42d2-bd17-42a2246ba56f",
+		"name": "AllegroLikeServer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "31967810"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin2\",\n    \"email\": \"admin2@gmail.com\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/registerUser"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin2\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/login"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NDY2NTAyODgsImV4cCI6MTc0NjczNjY4OH0.Yp60t_muOavPpPUVKcbegdJ1E92BFAPQO2HQQZPCVgRylvzntul9YPYLliQLi0gO9rX2XjpIhX9jdo71B0IWug",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/products"
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by id",
+					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": {
+								"payload": "{}",
+								"algorithm": "HS256",
+								"isSecretBase64Encoded": false,
+								"addTokenTo": "header",
+								"headerPrefix": "Bearer",
+								"queryParamKey": "token",
+								"header": "{}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NDY2NTAyODgsImV4cCI6MTc0NjczNjY4OH0.Yp60t_muOavPpPUVKcbegdJ1E92BFAPQO2HQQZPCVgRylvzntul9YPYLliQLi0gO9rX2XjpIhX9jdo71B0IWug",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/products/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Create product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWduYSIsInJvbGUiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjY1MTgzNywiZXhwIjoxNzQ2NzM4MjM3fQ.PRoqL2bt7qapLSMRWVB4wY0HfF0k2BiNyJMNMzQ88LASZlGNUp6MGZOZwmV6Eu95mHwRycl563tdj1vdSPSVLQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Wireless Mouse\",\n  \"description\": \"A sleek and ergonomic wireless mouse with long battery life.\",\n  \"price\": 49.99,\n  \"stockQuantity\": 150,\n  \"sellerId\": 1\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/products"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjIiLCJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpYXQiOjE3NDY2NTIzNDUsImV4cCI6MTc0NjczODc0NX0.p70pnh56sw0vhm8I87jnPy78suBDUMX-5lNqTG-dGwd5nTqr4RArb7LPJGywQJQHY2mkjVR9TYvC2vsSfuRYDw",
+								"type": "text"
+							}
+						],
+						"url": "{{baseUrl}}/products/2"
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYWduYSIsInJvbGUiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTc0NjY1MTgzNywiZXhwIjoxNzQ2NzM4MjM3fQ.PRoqL2bt7qapLSMRWVB4wY0HfF0k2BiNyJMNMzQ88LASZlGNUp6MGZOZwmV6Eu95mHwRycl563tdj1vdSPSVLQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Wireless Mouse\",\n  \"description\": \"A sleek and ergonomic wireless mouse with long battery life.\",\n  \"price\": 49.99,\n  \"stockQuantity\": 200\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/products/2"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get all users",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		}
+	]
+}
