@@ -2,6 +2,8 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,5 +48,14 @@ public class AuthController {
         } else {
             return ResponseEntity.badRequest().body("Provided username is already taken");
         }
+    }
+
+    @GetMapping("/checkToken")
+    public ResponseEntity<String> checkToken(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Invalid token was passed or it was not passed at all");
+        }
+
+        return ResponseEntity.ok(authentication.getPrincipal().toString());
     }
 }
