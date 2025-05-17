@@ -1,6 +1,7 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +47,7 @@ public class AuthController {
         if (registeredResponse.isPresent()) {
             return ResponseEntity.ok(registeredResponse.get());
         } else {
-            return ResponseEntity.badRequest().body("Provided username is already taken");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Provided username or email is already taken");
         }
     }
 
