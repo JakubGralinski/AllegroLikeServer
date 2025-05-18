@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService {
     public Optional<User> createUser(RegisterRequestDto registerRequestDto, Role role) {
         final User user = this.userMapper.mapToEntity(registerRequestDto, role);
         if (this.userRepository.findByUsername(user.getUsername())
+                               .isPresent() ||
+            this.userRepository.findByEmail(user.getEmail())
                                .isPresent()
         ) {
             return Optional.empty();

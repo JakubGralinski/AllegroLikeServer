@@ -4,12 +4,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.JwtResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.jwt.JwtProvider;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
@@ -52,7 +54,13 @@ public class AuthServiceImpl
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         final String token = jwtProvider.generateToken(auth);
-        final JwtResponseDto jwtResponse = new JwtResponseDto(token);
+        final UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        final String role = userDetails.getAuthorities()
+                                       .stream()
+                                       .findFirst()
+                                       .map(GrantedAuthority::getAuthority)
+                                       .orElse("NONE");
+        final JwtResponseDto jwtResponse = new JwtResponseDto(token, username, role);
         return Optional.of(jwtResponse);
     }
 

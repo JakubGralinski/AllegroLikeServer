@@ -1,7 +1,26 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses;
 
 public class JwtResponseDto {
-    private String token;
-    public JwtResponseDto(String token) { this.token = token; }
+
+    private final String token;
+
+    private final String username;
+
+    private final String role;
+
+    public JwtResponseDto(String token, String username, String role) {
+        this.token = token;
+        this.username = username;
+        this.role = role;
+    }
+
     public String getToken() { return token; }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
 }
