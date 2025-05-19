@@ -35,8 +35,7 @@ public class Category {
     public Category() {
     }
 
-    public Category(Long id, String name, Category parentCategory) {
-        this.id = id;
+    public Category(String name, Category parentCategory) {
         this.name = name;
         this.parentCategory = parentCategory;
     }
