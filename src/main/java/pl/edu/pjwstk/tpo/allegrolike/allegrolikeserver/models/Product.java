@@ -47,12 +47,13 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller) {
+    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.seller = seller;
+        this.category = category;
     }
 
     public Long getId() {
