@@ -8,5 +8,6 @@ public record ProductResponseDto(
         String description,
         BigDecimal price,
         int stockQuantity,
-        UserResponseDto seller
+        UserResponseDto seller,
+        CategoryResponseDto category
 ) {}

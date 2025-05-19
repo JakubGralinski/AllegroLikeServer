@@ -102,4 +102,12 @@ public class Product {
     public void setSeller(User seller) {
         this.seller = seller;
     }
-} 
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+}
