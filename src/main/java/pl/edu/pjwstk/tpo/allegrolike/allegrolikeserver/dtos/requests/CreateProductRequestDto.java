@@ -28,15 +28,19 @@ public class CreateProductRequestDto {
     @NotNull
     private Long sellerId;
 
+    @NotNull
+    private Long categoryId;
+
     public CreateProductRequestDto() {
     }
 
-    public CreateProductRequestDto(String name, String description, BigDecimal price, Integer stockQuantity, Long sellerId) {
+    public CreateProductRequestDto(String name, String description, BigDecimal price, Integer stockQuantity, Long sellerId, Long categoryId) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.sellerId = sellerId;
+        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -77,5 +81,13 @@ public class CreateProductRequestDto {
 
     public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

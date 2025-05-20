@@ -40,15 +40,20 @@ public class Product {
     @JoinColumn(name = "seller_id")
     private User seller;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller) {
+    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller, Category category) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.seller = seller;
+        this.category = category;
     }
 
     public Long getId() {
@@ -98,4 +103,12 @@ public class Product {
     public void setSeller(User seller) {
         this.seller = seller;
     }
-} 
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+}
