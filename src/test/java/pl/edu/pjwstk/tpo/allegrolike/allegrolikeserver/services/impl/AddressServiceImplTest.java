@@ -38,7 +38,7 @@ class AddressServiceImplTest {
     void searchAddresses_shouldSkipHouseNumberFind_whenQueryIsNotANumber() {
         // given
         final var searchQuery = "street";
-        final var foundAddress = new Address(1L, "city", "country", "street", 10);
+        final var foundAddress = new Address("city", "country", "street", 10);
         given(addressRepositoryMock.findByCityContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>());
         given(addressRepositoryMock.findByCountryContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>(List.of(foundAddress)));
         given(addressRepositoryMock.findByStreetContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>());
@@ -62,7 +62,7 @@ class AddressServiceImplTest {
     void searchAddresses_shouldReturnFoundAddressesFromHouseNumber_whenQueryIsANumber() {
         // given
         final var searchQuery = "1";
-        final var foundAddress = new Address(1L, "city", "country", "street", 10);
+        final var foundAddress = new Address("city", "country", "street", 10);
         given(addressRepositoryMock.findByCityContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>());
         given(addressRepositoryMock.findByCountryContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>());
         given(addressRepositoryMock.findByStreetContainingIgnoreCase(searchQuery)).willReturn(new ArrayList<>());
