@@ -55,12 +55,7 @@ public class AuthServiceImpl
         SecurityContextHolder.getContext().setAuthentication(auth);
         final String token = jwtProvider.generateToken(auth);
         final UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        final String role = userDetails.getAuthorities()
-                                       .stream()
-                                       .findFirst()
-                                       .map(GrantedAuthority::getAuthority)
-                                       .orElse("NONE");
-        final JwtResponseDto jwtResponse = new JwtResponseDto(token, username, role);
+        final JwtResponseDto jwtResponse = new JwtResponseDto(token, userDetails);
         return Optional.of(jwtResponse);
     }
 
