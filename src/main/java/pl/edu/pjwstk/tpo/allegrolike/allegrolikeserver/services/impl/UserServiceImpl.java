@@ -6,6 +6,7 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.UserRespon
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.UserMapper;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.AddressRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
@@ -19,9 +20,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    private final AddressRepository addressRepository;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.addressRepository = addressRepository;
     }
 
     @Override
@@ -44,5 +48,23 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                     .map(userMapper::mapEntityToResponseDto)
                     .toList();
+    }
+
+    @Override
+    public Optional<UserResponseDto> updateUserAddress(Long userId, Long addressId) {
+        final var addressOpt = this.addressRepository.findById(addressId);
+        if (addressOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final var userOpt = this.userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final var user = userOpt.get();
+        user.setAddress(addressOpt.get());
+        final var saved = userMapper.mapEntityToResponseDto(userRepository.save(user));
+        return Optional.of(saved);
     }
 }

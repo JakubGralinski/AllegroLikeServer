@@ -13,4 +13,6 @@ public interface UserService {
     Optional<User> createUser(RegisterRequestDto registerRequestDto, Role role);
 
     List<UserResponseDto> getAllUsers();
+
+    Optional<UserResponseDto> updateUserAddress(Long userId, Long addressId);
 }
