@@ -24,9 +24,9 @@ import static org.mockito.Mockito.never;
 class AddressServiceImplTest {
 
     @Mock
-    public AddressRepository addressRepositoryMock;
+    private AddressRepository addressRepositoryMock;
 
-    public AddressServiceImpl addressService;
+    private AddressServiceImpl addressService;
 
     @BeforeEach
     void setUp() {
