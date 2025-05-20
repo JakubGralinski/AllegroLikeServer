@@ -13,6 +13,7 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.LoginReques
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.JwtResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AuthService;
 
 import java.util.Optional;
@@ -52,11 +53,13 @@ public class AuthController {
     }
 
     @GetMapping("/checkToken")
-    public ResponseEntity<String> checkToken(Authentication authentication) {
+    public ResponseEntity<?> checkToken(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(401).body("Invalid token was passed or it was not passed at all");
         }
 
-        return ResponseEntity.ok(authentication.getPrincipal().toString());
+        final var userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        final var response = new JwtResponseDto(null, userDetails);
+        return ResponseEntity.ok(response);
     }
 }
