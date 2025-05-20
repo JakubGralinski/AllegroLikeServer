@@ -1,13 +1,19 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.UserResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.UserLacksPermissionToManageProductException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.UserMapper;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.AddressRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AddressService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
 import java.util.List;
@@ -20,12 +26,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    private final AddressRepository addressRepository;
+    private final AddressService addressService;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressRepository addressRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressService addressService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.addressRepository = addressRepository;
+        this.addressService = addressService;
     }
 
     @Override
@@ -52,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserResponseDto> updateUserAddress(Long userId, Long addressId) {
-        final var addressOpt = this.addressRepository.findById(addressId);
+        final var addressOpt = addressService.getAddressById(addressId);
         if (addressOpt.isEmpty()) {
             return Optional.empty();
         }
@@ -62,9 +68,41 @@ public class UserServiceImpl implements UserService {
             return Optional.empty();
         }
 
+        assertUserIsEligibleToManageThisAccount(userId);
+
         final var user = userOpt.get();
         user.setAddress(addressOpt.get());
         final var saved = userMapper.mapEntityToResponseDto(userRepository.save(user));
         return Optional.of(saved);
+    }
+
+    @Override
+    public Optional<UserResponseDto> createUserAddress(Long userId, CreateAddressRequestDto createAddressRequestDto) {
+        final var address = addressService.createAddress(createAddressRequestDto);
+        final var userOpt = this.userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        assertUserIsEligibleToManageThisAccount(userId);
+
+        final var user = userOpt.get();
+        user.setAddress(address);
+        final var saved = userMapper.mapEntityToResponseDto(userRepository.save(user));
+        return Optional.of(saved);
+    }
+
+    private void assertUserIsEligibleToManageThisAccount(Long userId) {
+        var userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                                                                 .getAuthentication()
+                                                                 .getPrincipal();
+
+        var isAdmin = userDetails.getAuthorities()
+                                 .stream()
+                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!userId.equals(userDetails.getId()) && !isAdmin) {
+            throw new UserLacksPermissionToManageProductException(userDetails.getUsername());
+        }
     }
 }

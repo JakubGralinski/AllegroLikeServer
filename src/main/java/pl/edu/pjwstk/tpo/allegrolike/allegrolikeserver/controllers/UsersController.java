@@ -3,6 +3,7 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.UserResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 
@@ -25,7 +26,7 @@ public class UsersController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("{userId}/addresses/{addressId}")
+    @PutMapping("{userId}/address/{addressId}")
     public ResponseEntity<UserResponseDto> updateUserAddress(
             @PathVariable Long userId,
             @PathVariable Long addressId
@@ -33,5 +34,14 @@ public class UsersController {
         final var updatedUser = userService.updateUserAddress(userId, addressId);
         return updatedUser.map(ResponseEntity::ok)
                           .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("{userId}/address")
+    public ResponseEntity<UserResponseDto> createUserAddress(
+            @PathVariable Long userId,
+            @RequestBody CreateAddressRequestDto createAddressRequestDto) {
+        final var userWithAddress = userService.createUserAddress(userId, createAddressRequestDto);
+        return userWithAddress.map(ResponseEntity::ok)
+                              .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

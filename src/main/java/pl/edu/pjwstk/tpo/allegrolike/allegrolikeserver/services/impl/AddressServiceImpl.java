@@ -1,12 +1,15 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
 import org.springframework.stereotype.Service;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.AddressResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.AddressMapper;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Address;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.AddressRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AddressService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AddressServiceImpl implements AddressService {
@@ -36,5 +39,16 @@ public class AddressServiceImpl implements AddressService {
         return foundAddresses.stream()
                              .map(addressMapper::mapEntityToResponseDto)
                              .toList();
+    }
+
+    @Override
+    public Address createAddress(CreateAddressRequestDto address) {
+        final var addressEntity = addressMapper.mapCreateDtoToEntity(address);
+        return addressRepository.save(addressEntity);
+    }
+
+    @Override
+    public Optional<Address> getAddressById(Long id) {
+        return addressRepository.findById(id);
     }
 }
