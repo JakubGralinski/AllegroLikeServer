@@ -28,13 +28,12 @@ public class Address {
     @OneToMany(mappedBy = "address")
     private List<User> users = new ArrayList<>();
 
-    public Address(Long id, String city, String country, String street, int houseNumber, List<User> users) {
+    public Address(Long id, String city, String country, String street, int houseNumber) {
         this.id = id;
         this.city = city;
         this.country = country;
         this.street = street;
         this.houseNumber = houseNumber;
-        this.users = users;
     }
 
     public Address() {
