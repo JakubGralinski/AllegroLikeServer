@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.JwtResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.UserResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
@@ -54,8 +55,11 @@ public class AuthServiceImpl
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         final String token = jwtProvider.generateToken(auth);
-        final UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        final JwtResponseDto jwtResponse = new JwtResponseDto(token, userDetails);
+        final var userOpt = getUserFromAuthentication(auth);
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        final JwtResponseDto jwtResponse = new JwtResponseDto(token, userOpt.get());
         return Optional.of(jwtResponse);
     }
 
@@ -68,5 +72,11 @@ public class AuthServiceImpl
         }
 
         return this.authenticate(registerRequestDto.getUsername(), registerRequestDto.getPassword());
+    }
+
+    @Override
+    public Optional<UserResponseDto> getUserFromAuthentication(Authentication authentication) {
+        final var userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userService.getUserById(userDetails.getId());
     }
 }

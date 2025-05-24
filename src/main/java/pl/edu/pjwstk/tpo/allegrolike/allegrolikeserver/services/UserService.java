@@ -18,4 +18,6 @@ public interface UserService {
     Optional<UserResponseDto> updateUserAddress(Long userId, Long addressId);
 
     Optional<UserResponseDto> createUserAddress(Long userId, CreateAddressRequestDto createAddressRequestDto);
+
+    Optional<UserResponseDto> getUserById(Long userId);
 }

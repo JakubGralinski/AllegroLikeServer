@@ -92,6 +92,12 @@ public class UserServiceImpl implements UserService {
         return Optional.of(saved);
     }
 
+    @Override
+    public Optional<UserResponseDto> getUserById(Long userId) {
+        final var userOpt = userRepository.findById(userId);
+        return userOpt.map(userMapper::mapEntityToResponseDto);
+    }
+
     private void assertUserIsEligibleToManageThisAccount(Long userId) {
         var userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                                                                  .getAuthentication()
