@@ -28,4 +28,12 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String handleServerException(Exception ex) {
+        log.info(ex.getMessage());
+        ex.printStackTrace();
+        return "Internal server error occurred, please try again later";
+    }
+
 }
