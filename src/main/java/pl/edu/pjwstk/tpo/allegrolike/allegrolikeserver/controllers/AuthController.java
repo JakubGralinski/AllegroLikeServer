@@ -58,8 +58,8 @@ public class AuthController {
             return ResponseEntity.status(401).body("Invalid token was passed or it was not passed at all");
         }
 
-        final var userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        final var response = new JwtResponseDto(null, userDetails);
-        return ResponseEntity.ok(response);
+        final var userOpt = authService.getUserFromAuthentication(authentication);
+        return userOpt.map(u -> ResponseEntity.ok(new JwtResponseDto(null, u)))
+                      .orElse(ResponseEntity.notFound().build());
     }
 }

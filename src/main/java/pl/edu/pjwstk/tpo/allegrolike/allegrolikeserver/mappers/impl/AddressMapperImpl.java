@@ -11,6 +11,9 @@ public class AddressMapperImpl implements AddressMapper {
 
     @Override
     public AddressResponseDto mapEntityToResponseDto(Address address) {
+        if (address == null) {
+            return null;
+        }
         return new AddressResponseDto(
                 address.getId(),
                 address.getCity(),
