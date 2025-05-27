@@ -20,4 +20,6 @@ public interface UserService {
     Optional<UserResponseDto> createUserAddress(Long userId, CreateAddressRequestDto createAddressRequestDto);
 
     Optional<UserResponseDto> getUserById(Long userId);
+
+    Optional<UserResponseDto> updateUserById(String username, String email, Long userId);
 }
