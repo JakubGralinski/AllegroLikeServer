@@ -23,10 +23,6 @@ public class AddressController {
     @GetMapping("/{searchQuery}")
     public ResponseEntity<List<AddressResponseDto>> searchAddresses(@PathVariable String searchQuery) {
         final var foundAddresses = addressService.searchAddresses(searchQuery);
-        if (foundAddresses.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(foundAddresses);
     }
 }
