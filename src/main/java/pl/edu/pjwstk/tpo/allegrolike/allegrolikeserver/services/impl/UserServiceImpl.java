@@ -7,10 +7,8 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.RegisterReq
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.UserResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.UserLacksPermissionToManageProductException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.UserMapper;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.AddressRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AddressService;
@@ -96,6 +94,25 @@ public class UserServiceImpl implements UserService {
     public Optional<UserResponseDto> getUserById(Long userId) {
         final var userOpt = userRepository.findById(userId);
         return userOpt.map(userMapper::mapEntityToResponseDto);
+    }
+
+    @Override
+    public Optional<UserResponseDto> updateUserById(String username, String email, Long userId) {
+        assertUserIsEligibleToManageThisAccount(userId);
+        final var userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final var user = userOpt.get();
+        if (username != null && !username.equals(userOpt.get().getUsername())) {
+            user.setUsername(username);
+        }
+        if (email != null && !email.equals(userOpt.get().getEmail())) {
+            user.setEmail(email);
+        }
+        userRepository.save(user);
+        return Optional.of(userMapper.mapEntityToResponseDto(user));
     }
 
     private void assertUserIsEligibleToManageThisAccount(Long userId) {
