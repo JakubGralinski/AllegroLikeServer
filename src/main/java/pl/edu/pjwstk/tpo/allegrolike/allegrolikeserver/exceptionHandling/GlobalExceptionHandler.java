@@ -3,6 +3,7 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptionHandling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
     public String handleForbiddenException(ForbiddenException ex) {
         log.info(ex.getMessage());
         return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public String handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        log.info(ex.getMessage());
+        return "You do not have permission to access this resource";
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

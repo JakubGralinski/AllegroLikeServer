@@ -8,5 +8,5 @@ public interface ProductMapper {
 
     ProductResponseDto mapEntityToResponseDto(Product product);
 
-    Product mapCreateDtoToEntity(CreateProductRequestDto dto);
+    Product mapCreateDtoToEntity(CreateProductRequestDto dto, String fileName);
 }

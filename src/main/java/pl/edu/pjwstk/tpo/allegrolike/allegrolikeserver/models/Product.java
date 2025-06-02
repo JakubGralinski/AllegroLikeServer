@@ -36,6 +36,9 @@ public class Product {
     @Positive
     private Integer stockQuantity;
 
+    @NotNull
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private User seller;
@@ -47,13 +50,14 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller, Category category) {
+    public Product(String name, String description, BigDecimal price, Integer stockQuantity, User seller, Category category, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.seller = seller;
         this.category = category;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -110,5 +114,13 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

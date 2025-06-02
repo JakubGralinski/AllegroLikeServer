@@ -2,6 +2,7 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateProductRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.UpdateProductRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.ProductResponseDto;
@@ -43,15 +46,19 @@ public class ProductsController {
                 ResponseEntity.status(404).body("Product with id = " + id + " was not found");
     }
 
-    @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid CreateProductRequestDto dto) {
-        var response = this.productService.createProduct(dto);
+    @PostMapping(consumes = {"multipart/form-data"})
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductResponseDto> createProduct(
+            @RequestPart("productData") @Valid CreateProductRequestDto dto,
+            @RequestPart(value = "productImage", required = false) MultipartFile productImage) {
+        var response = this.productService.createProduct(dto, productImage);
         var uri = URI.create("/api/products/" + response.id());
         return ResponseEntity.created(uri)
                              .body(response);
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         if(!this.productService.deleteProductById(id)) {
             return ResponseEntity.status(404).body("Product with id = " + id + " was not found");
@@ -61,6 +68,7 @@ public class ProductsController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateProduct(
             @PathVariable Long id,
             @RequestBody @Valid UpdateProductRequestDto dto) {
