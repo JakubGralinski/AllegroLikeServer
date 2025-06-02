@@ -1,5 +1,6 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services;
 
+import org.springframework.web.multipart.MultipartFile;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateProductRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.UpdateProductRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.ProductResponseDto;
@@ -13,7 +14,7 @@ public interface ProductService {
 
     Optional<ProductResponseDto> getProductById(Long id);
 
-    ProductResponseDto createProduct(CreateProductRequestDto product);
+    ProductResponseDto createProduct(CreateProductRequestDto product, MultipartFile productImage);
 
     Optional<ProductResponseDto> updateProduct(Long id, UpdateProductRequestDto product);
 
