@@ -37,3 +37,6 @@ out/
 .vscode/
 
 *.env
+
+### APP SPECIFIC ###
+src/main/resources/static/productImages/*
