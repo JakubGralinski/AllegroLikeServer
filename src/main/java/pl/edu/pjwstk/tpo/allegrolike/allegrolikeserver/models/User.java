@@ -3,6 +3,9 @@ package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
@@ -29,6 +32,9 @@ public class User {
 
     @ManyToOne
     private Address address;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<Order>();
 
     public User() {
     }
@@ -85,5 +91,13 @@ public class User {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }
