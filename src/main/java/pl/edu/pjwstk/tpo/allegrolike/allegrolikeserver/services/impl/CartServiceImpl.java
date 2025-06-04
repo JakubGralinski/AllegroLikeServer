@@ -91,4 +91,9 @@ public class CartServiceImpl implements CartService {
         cart.getItems().clear();
         return cartRepository.save(cart);
     }
+
+    @Override
+    public Optional<Cart> getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
+    }
 } 
