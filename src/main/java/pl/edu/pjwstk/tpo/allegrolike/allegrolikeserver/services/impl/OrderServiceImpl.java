@@ -76,9 +76,12 @@ public class OrderServiceImpl implements OrderService {
         var totalPrice = BigDecimal.ZERO;
 
         for(final var item : cartOpt.get().getItems()) {
-            if(item.getProduct().getStockQuantity() < item.getQuantity()) {
+            final var product = item.getProduct();
+            if(product.getStockQuantity() < item.getQuantity()) {
                 throw new NotEnoughProductInStockException(item.getProduct().getId());
             }
+            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            productRepository.save(product);
             final var orderItem = new OrderItem(order, item.getProduct(), item.getQuantity());
             order.getOrderItems().add(orderItem);
             totalPrice = totalPrice.add(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
@@ -98,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponseDto addProductToOrder(Long orderId, Long productId, Integer quantity) {
         final var order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(String.format("Order with id = %s was not found", orderId)));
         final var product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException(String.format("Product with id = %s was not found", productId)));
@@ -120,6 +124,8 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setQuantity(orderItem.getQuantity() + quantity);
         }
 
+        product.setStockQuantity(product.getStockQuantity() - quantity);
+        productRepository.save(product);
         orderRepository.save(order);
 
         var updatedTotalPrice = order.getTotal();
