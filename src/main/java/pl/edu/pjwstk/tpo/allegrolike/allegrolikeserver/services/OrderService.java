@@ -12,7 +12,7 @@ public interface OrderService {
 
     Optional<OrderResponseDto> createOrderFromUsersCart(Long userId, CreateAddressRequestDto shippingAddress);
 
-    Optional<OrderResponseDto> addProductToOrder(Long orderId, Long productId, Integer quantity);
+    OrderResponseDto addProductToOrder(Long orderId, Long productId, Integer quantity);
 
     List<OrderResponseDto> getAllOrdersByUserId(Long userId);
 }
