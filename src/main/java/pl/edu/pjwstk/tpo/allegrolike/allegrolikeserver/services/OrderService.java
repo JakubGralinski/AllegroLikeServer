@@ -1,5 +1,6 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services;
 
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.OrderResponseDto;
 
 import java.util.List;
@@ -9,9 +10,9 @@ public interface OrderService {
 
     List<OrderResponseDto> getAllOrders();
 
-    Optional<OrderResponseDto> createOrderFromUsersCart(Long userId);
+    Optional<OrderResponseDto> createOrderFromUsersCart(Long userId, CreateAddressRequestDto shippingAddress);
 
-    Optional<OrderResponseDto> updateOrder(Long orderId);
+    Optional<OrderResponseDto> addProductToOrder(Long orderId, Long productId, Integer quantity);
 
     List<OrderResponseDto> getAllOrdersByUserId(Long userId);
 }

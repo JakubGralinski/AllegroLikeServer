@@ -1,15 +1,22 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+import jakarta.transaction.Transactional;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.OrderResponseDto;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.UserLacksPermissionToManageProductException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.OrderMapper;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderItem;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderStatus;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderItemRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderRepository;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.AddressService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.CartService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.OrderService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +28,22 @@ public class OrderServiceImpl implements OrderService {
 
     private final CartService cartService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartService cartService) {
+    private final UserRepository userRepository;
+
+    private final AddressService addressService;
+
+    private final ProductRepository productRepository;
+
+    private final OrderItemRepository orderItemRepository;
+
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartService cartService, UserRepository userRepository, AddressService addressService, ProductRepository productRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartService = cartService;
+        this.userRepository = userRepository;
+        this.addressService = addressService;
+        this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -36,28 +55,80 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderResponseDto> createOrderFromUsersCart(Long userId) {
+    @Transactional
+    public Optional<OrderResponseDto> createOrderFromUsersCart(Long userId, CreateAddressRequestDto shippingAddress) {
         ServiceSecUtils.assertUserIsEligibleToManageThisAccount(userId);
 
+        final var userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        final var user = userOpt.get();
+
         final var cartOpt = cartService.getCartByUserId(userId);
-        if (cartOpt.isEmpty()) {
+        if (cartOpt.isEmpty() || cartOpt.get().getItems().isEmpty()) {
             return Optional.empty();
         }
 
+        final var cart = cartOpt.get();
+        final var order = new Order();
+        order.setUser(user);
+        order.setStatus(OrderStatus.PLACED);
 
+        var totalPrice = BigDecimal.ZERO;
 
+        for(final var item : cartOpt.get().getItems()) {
+            final var orderItem = new OrderItem(order, item.getProduct(), item.getQuantity());
+            order.getOrderItems().add(orderItem);
+            totalPrice = totalPrice.add(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        order.setTotal(totalPrice);
 
+        if (shippingAddress != null) {
+            final var createdAddress = addressService.createAddress(shippingAddress);
+            order.setShippingAddress(createdAddress);
+        } else {
+            order.setShippingAddress(user.getAddress());
+        }
+
+        final var savedOrder = orderRepository.save(order);
+
+        return Optional.of(orderMapper.mapToOrderResponseDto(savedOrder));
     }
 
     @Override
-    public Optional<OrderResponseDto> updateOrder(Long orderId) {
-        return Optional.empty();
+    public Optional<OrderResponseDto> addProductToOrder(Long orderId, Long productId, Integer quantity) {
+        ServiceSecUtils.assertUserIsEligibleToManageThisAccount(orderId);
+        final var order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(String.format("Order with id = %s was not found", orderId)));
+        final var product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException(String.format("Product with id = %s was not found", productId)));
+
+        final var orderItemWithThisProduct = order.getOrderItems()
+                                                  .stream()
+                                                  .filter(oi -> oi.getProduct()
+                                                                  .getId()
+                                                                  .equals(productId))
+                                                  .findFirst();
+        if (orderItemWithThisProduct.isEmpty()) {
+            final var orderItem = new OrderItem(order, product, quantity);
+            order.getOrderItems().add(orderItem);
+            orderItemRepository.save(orderItem);
+        } else {
+            final var orderItem = orderItemWithThisProduct.get();
+            orderItem.setQuantity(orderItem.getQuantity() + quantity);
+            orderItemRepository.save(orderItem);
+        }
+
+        var updatedTotalPrice = order.getTotal();
+        updatedTotalPrice = updatedTotalPrice.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        order.setTotal(updatedTotalPrice);
+        return Optional.of(orderMapper.mapToOrderResponseDto(order));
     }
 
     @Override
     public List<OrderResponseDto> getAllOrdersByUserId(Long userId) {
-        return List.of();
+        ServiceSecUtils.assertUserIsEligibleToManageThisAccount(userId);
+
+        final var orders = orderRepository.findAll();
+        return orders.stream().map(orderMapper::mapToOrderResponseDto).toList();
     }
-
-
 }
