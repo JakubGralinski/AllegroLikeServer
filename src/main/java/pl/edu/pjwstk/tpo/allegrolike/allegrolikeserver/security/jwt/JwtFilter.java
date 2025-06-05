@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -21,13 +23,42 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
+    // Define public paths that should bypass JWT processing
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/api/auth/",
+            "/api/dashboard/",
+            "/swagger-ui/",
+            "/v3/api-docs"
+    );
+
     public JwtFilter(JwtProvider jwtProvider, UserDetailsService userDetailsService) {
         this.jwtProvider = jwtProvider;
         this.userDetailsService = userDetailsService;
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // The shouldNotFilter logic is implicitly handled by OncePerRequestFilter if overridden.
+        // However, Spring Security recommends putting this logic at the start of doFilterInternal
+        // or using a RequestMatcher in the SecurityConfig for more fine-grained control.
+        // For clarity here, we can re-check or rely on shouldNotFilter if it were effectively applied before this method.
+        // Given the current setup, it might be better to ensure shouldNotFilter logic is directly used or replicated.
+
+        // If shouldNotFilter is properly configured and works as expected with OncePerRequestFilter,
+        // requests to public paths won't reach the logic below.
+        // If we want to be absolutely sure, we can add an explicit check here:
+        String path = request.getRequestURI();
+        if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             final String jwtToken = authorizationHeader.substring(7);
@@ -36,7 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                                     .loadUserByUsername(this.jwtProvider
                                                                             .getUsernameFromToken(jwtToken));
 
-                final Authentication  authentication = new UsernamePasswordAuthenticationToken(
+                final Authentication authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
