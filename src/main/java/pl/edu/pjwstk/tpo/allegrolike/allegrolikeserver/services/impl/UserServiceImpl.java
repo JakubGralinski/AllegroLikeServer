@@ -17,6 +17,8 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.UserService;
 import java.util.List;
 import java.util.Optional;
 
+import static pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl.ServiceSecUtils.assertUserIsEligibleToManageThisAccount;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -113,19 +115,5 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
         return Optional.of(userMapper.mapEntityToResponseDto(user));
-    }
-
-    private void assertUserIsEligibleToManageThisAccount(Long userId) {
-        var userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                                                                 .getAuthentication()
-                                                                 .getPrincipal();
-
-        var isAdmin = userDetails.getAuthorities()
-                                 .stream()
-                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-
-        if (!userId.equals(userDetails.getId()) && !isAdmin) {
-            throw new UserLacksPermissionToManageProductException(userDetails.getUsername());
-        }
     }
 }
