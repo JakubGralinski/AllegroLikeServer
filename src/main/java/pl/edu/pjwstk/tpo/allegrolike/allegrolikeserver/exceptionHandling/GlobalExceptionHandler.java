@@ -7,6 +7,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.badrequest.BadRequestException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.ForbiddenException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 
@@ -25,6 +26,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
     public String handleForbiddenException(ForbiddenException ex) {
+        log.info(ex.getMessage());
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public String handleBadRequestException(BadRequestException ex) {
         log.info(ex.getMessage());
         return ex.getMessage();
     }

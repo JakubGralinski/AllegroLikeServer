@@ -4,12 +4,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.OrderResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.badrequest.NotEnoughProductInStockException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.OrderMapper;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderItem;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderStatus;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderItemRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
@@ -36,16 +36,13 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductRepository productRepository;
 
-    private final OrderItemRepository orderItemRepository;
-
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartService cartService, UserRepository userRepository, AddressService addressService, ProductRepository productRepository, OrderItemRepository orderItemRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartService cartService, UserRepository userRepository, AddressService addressService, ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartService = cartService;
         this.userRepository = userRepository;
         this.addressService = addressService;
         this.productRepository = productRepository;
-        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
@@ -79,6 +76,9 @@ public class OrderServiceImpl implements OrderService {
         var totalPrice = BigDecimal.ZERO;
 
         for(final var item : cartOpt.get().getItems()) {
+            if(item.getProduct().getStockQuantity() < item.getQuantity()) {
+                throw new NotEnoughProductInStockException(item.getProduct().getId());
+            }
             final var orderItem = new OrderItem(order, item.getProduct(), item.getQuantity());
             order.getOrderItems().add(orderItem);
             totalPrice = totalPrice.add(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
@@ -99,9 +99,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto addProductToOrder(Long orderId, Long productId, Integer quantity) {
-        ServiceSecUtils.assertUserIsEligibleToManageThisAccount(orderId);
         final var order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(String.format("Order with id = %s was not found", orderId)));
         final var product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException(String.format("Product with id = %s was not found", productId)));
+        ServiceSecUtils.assertUserIsEligibleToManageThisAccount(order.getUser().getId());
+        if (product.getStockQuantity() < quantity) {
+            throw new NotEnoughProductInStockException(productId);
+        }
 
         final var orderItemWithThisProduct = order.getOrderItems()
                                                   .stream()
@@ -112,12 +115,12 @@ public class OrderServiceImpl implements OrderService {
         if (orderItemWithThisProduct.isEmpty()) {
             final var orderItem = new OrderItem(order, product, quantity);
             order.getOrderItems().add(orderItem);
-            orderItemRepository.save(orderItem);
         } else {
             final var orderItem = orderItemWithThisProduct.get();
             orderItem.setQuantity(orderItem.getQuantity() + quantity);
-            orderItemRepository.save(orderItem);
         }
+
+        orderRepository.save(order);
 
         var updatedTotalPrice = order.getTotal();
         updatedTotalPrice = updatedTotalPrice.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));

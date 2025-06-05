@@ -1,6 +1,7 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.ForbiddenException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.UserLacksPermissionToManageProductException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
 
@@ -16,7 +17,8 @@ public class ServiceSecUtils {
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         if (!userId.equals(userDetails.getId()) && !isAdmin) {
-            throw new UserLacksPermissionToManageProductException(userDetails.getUsername());
+            throw new ForbiddenException(String.format("%s" +
+                    " lacks necessary permissions to this resource", userDetails.getUsername()));
         }
     }
 }
