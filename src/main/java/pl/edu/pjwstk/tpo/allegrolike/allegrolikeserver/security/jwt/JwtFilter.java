@@ -44,15 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // The shouldNotFilter logic is implicitly handled by OncePerRequestFilter if overridden.
-        // However, Spring Security recommends putting this logic at the start of doFilterInternal
-        // or using a RequestMatcher in the SecurityConfig for more fine-grained control.
-        // For clarity here, we can re-check or rely on shouldNotFilter if it were effectively applied before this method.
-        // Given the current setup, it might be better to ensure shouldNotFilter logic is directly used or replicated.
-
-        // If shouldNotFilter is properly configured and works as expected with OncePerRequestFilter,
-        // requests to public paths won't reach the logic below.
-        // If we want to be absolutely sure, we can add an explicit check here:
+        
         String path = request.getRequestURI();
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
