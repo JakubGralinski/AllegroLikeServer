@@ -5,7 +5,14 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.*;
+import org.springframework.transaction.annotation.Transactional;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Category;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderItem;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderStatus;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.CategoryRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
@@ -16,7 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Profile("dev")
@@ -56,6 +62,10 @@ public class DataSeeder implements ApplicationRunner {
             testUser = userRepository.findAll().get(0);
         }
 
+        final var testAdmin = new User("mrDanczak", "testadmin@gmail.com", passwordEncoder.encode("password"));
+        testAdmin.setRole(Role.ROLE_ADMIN);
+        userRepository.save(testAdmin);
+
         List<Category> categories;
         if (categoryRepository.count() == 0) {
             System.out.println("Seeding categories...");
@@ -73,12 +83,12 @@ public class DataSeeder implements ApplicationRunner {
         if (productRepository.count() == 0 && !categories.isEmpty()) {
             System.out.println("Seeding products...");
             products = new ArrayList<>();
-            products.add(new Product("Laptop Pro", "A powerful laptop.", new BigDecimal("1200.00"), 50, testUser, categories.get(0), "url_laptop"));
-            products.add(new Product("Smartphone X", "The latest smartphone.", new BigDecimal("800.00"), 150, testUser, categories.get(0), "url_phone"));
-            products.add(new Product("History of Time", "A popular science book.", new BigDecimal("25.50"), 200, testUser, categories.get(1), "url_book"));
-            products.add(new Product("Leather Jacket", "A stylish leather jacket.", new BigDecimal("150.00"), 100, testUser, categories.get(2), "url_jacket"));
-            products.add(new Product("Coffee Maker", "Brews delicious coffee.", new BigDecimal("75.00"), 80, testUser, categories.get(3), "url_coffee"));
-            products.add(new Product("Wireless Headphones", "Noise-cancelling headphones.", new BigDecimal("250.00"), 120, testUser, categories.get(0), "url_headphones"));
+            products.add(new Product("Laptop Pro", "A powerful laptop.", new BigDecimal("1200.00"), 50, testAdmin, categories.get(0), "url_laptop"));
+            products.add(new Product("Smartphone X", "The latest smartphone.", new BigDecimal("800.00"), 150, testAdmin, categories.get(0), "url_phone"));
+            products.add(new Product("History of Time", "A popular science book.", new BigDecimal("25.50"), 200, testAdmin, categories.get(1), "url_book"));
+            products.add(new Product("Leather Jacket", "A stylish leather jacket.", new BigDecimal("150.00"), 100, testAdmin, categories.get(2), "url_jacket"));
+            products.add(new Product("Coffee Maker", "Brews delicious coffee.", new BigDecimal("75.00"), 80, testAdmin, categories.get(3), "url_coffee"));
+            products.add(new Product("Wireless Headphones", "Noise-cancelling headphones.", new BigDecimal("250.00"), 120, testAdmin, categories.get(0), "url_headphones"));
             productRepository.saveAll(products);
         } else {
              System.out.println("Products already exist or no categories found to link to.");

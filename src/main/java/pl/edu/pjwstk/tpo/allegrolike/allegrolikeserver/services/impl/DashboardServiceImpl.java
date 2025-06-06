@@ -1,15 +1,16 @@
-package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services;
+package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.impl;
 
 import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.RidgelineCategoryDataDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.RidgelinePointDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.SalesDataDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.DashboardService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
