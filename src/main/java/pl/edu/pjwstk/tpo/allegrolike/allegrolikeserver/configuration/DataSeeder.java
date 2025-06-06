@@ -87,12 +87,12 @@ public class DataSeeder implements ApplicationRunner {
         if (productRepository.count() == 0 && !categories.isEmpty()) {
             System.out.println("Seeding products...");
             products = new ArrayList<>();
-            products.add(new Product("Laptop Pro", "A powerful laptop.", new BigDecimal("1200.00"), 50, testAdmin, categories.get(0), "url_laptop"));
-            products.add(new Product("Smartphone X", "The latest smartphone.", new BigDecimal("800.00"), 150, testAdmin, categories.get(0), "url_phone"));
-            products.add(new Product("History of Time", "A popular science book.", new BigDecimal("25.50"), 200, testAdmin, categories.get(1), "url_book"));
-            products.add(new Product("Leather Jacket", "A stylish leather jacket.", new BigDecimal("150.00"), 100, testAdmin, categories.get(2), "url_jacket"));
-            products.add(new Product("Coffee Maker", "Brews delicious coffee.", new BigDecimal("75.00"), 80, testAdmin, categories.get(3), "url_coffee"));
-            products.add(new Product("Wireless Headphones", "Noise-cancelling headphones.", new BigDecimal("250.00"), 120, testAdmin, categories.get(0), "url_headphones"));
+            products.add(new Product("Laptop Pro", "A powerful laptop.", new BigDecimal("1200.00"), 50, testAdmin, categories.get(0), "laptop.png"));
+            products.add(new Product("Smartphone X", "The latest smartphone.", new BigDecimal("800.00"), 150, testAdmin, categories.get(0), "phone.png"));
+            products.add(new Product("History of Time", "A popular science book.", new BigDecimal("25.50"), 200, testAdmin, categories.get(1), "book.png"));
+            products.add(new Product("Leather Jacket", "A stylish leather jacket.", new BigDecimal("150.00"), 100, testAdmin, categories.get(2), "jacket.png"));
+            products.add(new Product("Coffee Maker", "Brews delicious coffee.", new BigDecimal("75.00"), 80, testAdmin, categories.get(3), "coffee.png"));
+            products.add(new Product("Wireless Headphones", "Noise-cancelling headphones.", new BigDecimal("250.00"), 120, testAdmin, categories.get(0), "headphones.png"));
             productRepository.saveAll(products);
         } else {
              System.out.println("Products already exist or no categories found to link to.");
