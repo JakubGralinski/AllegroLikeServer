@@ -62,9 +62,13 @@ public class DataSeeder implements ApplicationRunner {
             testUser = userRepository.findAll().get(0);
         }
 
-        final var testAdmin = new User("mrDanczak", "testadmin@gmail.com", passwordEncoder.encode("password"));
-        testAdmin.setRole(Role.ROLE_ADMIN);
-        userRepository.save(testAdmin);
+        final var adminInDbOpt = userRepository.findByUsername("mrDanczak");
+        User testAdmin = adminInDbOpt.orElseGet(() -> {
+            final var admin = new User("mrDanczak", "testadmin@gmail.com", passwordEncoder.encode("password"));
+            admin.setRole(Role.ROLE_ADMIN);
+            userRepository.save(admin);
+            return admin;
+        });
 
         List<Category> categories;
         if (categoryRepository.count() == 0) {
@@ -126,7 +130,7 @@ public class DataSeeder implements ApplicationRunner {
                         total,
                         null
                 );
-                
+
                 for(OrderItem item : currentOrderItems) {
                     item.setOrder(order);
                 }
@@ -138,7 +142,7 @@ public class DataSeeder implements ApplicationRunner {
         } else {
              System.out.println("Orders already exist or no products found to create orders with. Skipping order seeding.");
         }
-        
+
         System.out.println("Data Seeder finished.");
     }
-} 
+}
