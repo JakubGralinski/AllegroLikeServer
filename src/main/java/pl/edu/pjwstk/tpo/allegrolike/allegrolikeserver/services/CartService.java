@@ -1,7 +1,6 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services;
 
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Cart;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.CartItem;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.CartResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 
@@ -9,15 +8,15 @@ import java.util.Optional;
 
 public interface CartService {
 
-    Cart getOrCreateCartForUser(User user);
+    CartResponseDto getOrCreateCartForUser(User user);
 
-    Cart addItemToCart(User user, Product product, int quantity);
+    CartResponseDto addItemToCart(User user, Product product, int quantity);
 
-    Cart updateCartItem(User user, Long cartItemId, int quantity);
+    CartResponseDto updateCartItem(User user, Long cartItemId, int quantity);
 
-    Cart removeCartItem(User user, Long cartItemId);
+    CartResponseDto removeCartItem(User user, Long cartItemId);
 
-    Cart clearCart(User user);
+    CartResponseDto clearCart(User user);
 
-    Optional<Cart> getCartByUserId(Long userId);
+    Optional<CartResponseDto> getCartByUserId(Long userId);
 } 
