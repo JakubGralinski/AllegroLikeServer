@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
     public String handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
         log.info(ex.getMessage());
         return "You do not have permission to access this resource";
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public String handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException ex) {
+        log.info(ex.getMessage());
+        return "This request method is not supported on this path";
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

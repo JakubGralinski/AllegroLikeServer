@@ -25,7 +25,7 @@ public class CartMapperImpl implements CartMapper {
         final var user = userMapper.mapEntityToResponseDto(cart.getUser());
         final var cartItems = cart.getItems()
                                   .stream()
-                                  .map(cartItem -> new CartItemResponseDto(cart.getId(), productMapper.mapEntityToResponseDto(cartItem.getProduct()), cartItem.getQuantity()))
+                                  .map(cartItem -> new CartItemResponseDto(cartItem.getId(), productMapper.mapEntityToResponseDto(cartItem.getProduct()), cartItem.getQuantity()))
                                   .toList();
         return new CartResponseDto(
                 cart.getId(),
