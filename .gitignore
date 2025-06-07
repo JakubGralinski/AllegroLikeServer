@@ -40,3 +40,5 @@ out/
 
 ### APP SPECIFIC ###
 src/main/resources/static/productImages/*
+!src/main/resources/static/productImages/test
+!src/main/resources/static/productImages/test/*
