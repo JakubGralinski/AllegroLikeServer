@@ -1,13 +1,19 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Cart;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.CartResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.CartService;
 
 @RestController
@@ -22,45 +28,45 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<Cart> getCart(@AuthenticationPrincipal User user) {
-        Cart cart = cartService.getOrCreateCartForUser(user);
+    public ResponseEntity<CartResponseDto> getCart(@AuthenticationPrincipal UserDetailsImpl user) {
+        final var cart = cartService.getOrCreateCartForUser(user.getId());
         return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Cart> addItemToCart(
-            @AuthenticationPrincipal User user,
+    public ResponseEntity<CartResponseDto> addItemToCart(
+            @AuthenticationPrincipal UserDetailsImpl user,
             @RequestParam Long productId,
             @RequestParam int quantity
     ) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
-        Cart cart = cartService.addItemToCart(user, product, quantity);
+        final var cart = cartService.addItemToCart(user.getId(), product, quantity);
         return ResponseEntity.ok(cart);
     }
 
     @PatchMapping("/items/{id}")
-    public ResponseEntity<Cart> updateCartItem(
-            @AuthenticationPrincipal User user,
+    public ResponseEntity<CartResponseDto> updateCartItem(
+            @AuthenticationPrincipal UserDetailsImpl user,
             @PathVariable Long id,
             @RequestParam int quantity
     ) {
-        Cart cart = cartService.updateCartItem(user, id, quantity);
+        final var cart = cartService.updateCartItem(user.getId(), id, quantity);
         return ResponseEntity.ok(cart);
     }
 
     @DeleteMapping("/items/{id}")
-    public ResponseEntity<Cart> removeCartItem(
-            @AuthenticationPrincipal User user,
+    public ResponseEntity<CartResponseDto> removeCartItem(
+            @AuthenticationPrincipal UserDetailsImpl user,
             @PathVariable Long id
     ) {
-        Cart cart = cartService.removeCartItem(user, id);
+        final var cart = cartService.removeCartItem(user.getId(), id);
         return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/clear")
-    public ResponseEntity<Cart> clearCart(@AuthenticationPrincipal User user) {
-        Cart cart = cartService.clearCart(user);
+    public ResponseEntity<CartResponseDto> clearCart(@AuthenticationPrincipal UserDetailsImpl user) {
+        final var cart = cartService.clearCart(user.getId());
         return ResponseEntity.ok(cart);
     }
 } 
