@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.CartResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.CartMapper;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Cart;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.CartItem;
@@ -11,6 +12,7 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.CartItemRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.CartRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.CartService;
 
 import java.util.Iterator;
@@ -25,23 +27,29 @@ public class CartServiceImpl implements CartService {
 
     private final CartMapper cartMapper;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, CartMapper cartMapper) {
+    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, CartMapper cartMapper, UserRepository userRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartMapper = cartMapper;
+        this.userRepository = userRepository;
     }
 
 
     @Override
-    public CartResponseDto getOrCreateCartForUser(User user) {
-       final var cart = getOrCreateCartEntityForUser(user);
-       return cartMapper.mapToCartResponseDto(cart);
+    @Transactional
+    public CartResponseDto getOrCreateCartForUser(Long userId) {
+        final var user = getUserWithSecCheck(userId);
+        final var cart = getOrCreateCartEntityForUser(user);
+        return cartMapper.mapToCartResponseDto(cart);
     }
 
     @Override
     @Transactional
-    public CartResponseDto addItemToCart(User user, Product product, int quantity) {
+    public CartResponseDto addItemToCart(Long userId, Product product, int quantity) {
+        final var user = getUserWithSecCheck(userId);
         Cart cart = getOrCreateCartEntityForUser(user);
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
@@ -62,7 +70,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto updateCartItem(User user, Long cartItemId, int quantity) {
+    public CartResponseDto updateCartItem(Long userId, Long cartItemId, int quantity) {
+        final var user = getUserWithSecCheck(userId);
         Cart cart = getOrCreateCartEntityForUser(user);
         for (CartItem item : cart.getItems()) {
             if (item.getId().equals(cartItemId)) {
@@ -78,7 +87,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto removeCartItem(User user, Long cartItemId) {
+    public CartResponseDto removeCartItem(Long userId, Long cartItemId) {
+        final var user = getUserWithSecCheck(userId);
         Cart cart = getOrCreateCartEntityForUser(user);
         Iterator<CartItem> iterator = cart.getItems().iterator();
         while (iterator.hasNext()) {
@@ -96,7 +106,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto clearCart(User user) {
+    public CartResponseDto clearCart(Long userId) {
+        final var user = getUserWithSecCheck(userId);
         Cart cart = getOrCreateCartEntityForUser(user);
         for (CartItem item : cart.getItems()) {
             cartItemRepository.delete(item);
@@ -108,15 +119,18 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Optional<CartResponseDto> getCartByUserId(Long userId) {
-        final var cart = cartRepository.findByUserId(userId);
-
-        return cart.map(cartMapper::mapToCartResponseDto);
+    public Optional<Cart> getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
     }
 
-    @Transactional
     protected Cart getOrCreateCartEntityForUser(User user) {
         return cartRepository.findByUser(user)
                              .orElseGet(() -> cartRepository.save(new Cart(user)));
+    }
+
+    private User getUserWithSecCheck(Long userId) {
+        ServiceSecUtils.assertUserIsEligibleToManageThisAccount(userId);
+        return userRepository.findById(userId)
+                             .orElseThrow(() -> new NotFoundException("User with id = " + userId + " was not found"));
     }
 } 
