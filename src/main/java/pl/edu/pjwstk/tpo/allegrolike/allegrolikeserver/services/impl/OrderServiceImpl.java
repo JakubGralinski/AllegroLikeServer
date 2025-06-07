@@ -96,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         final var savedOrder = orderRepository.save(order);
+        cartService.clearCart(userId);
 
         return Optional.of(orderMapper.mapToOrderResponseDto(savedOrder));
     }

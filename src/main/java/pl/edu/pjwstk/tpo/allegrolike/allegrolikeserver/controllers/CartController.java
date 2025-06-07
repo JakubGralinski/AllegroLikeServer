@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.CartResponseDto;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.security.UserDetailsImpl;
@@ -40,7 +41,7 @@ public class CartController {
             @RequestParam int quantity
     ) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new NotFoundException("Product with id = " + productId + " was not found"));
         final var cart = cartService.addItemToCart(user.getId(), product, quantity);
         return ResponseEntity.ok(cart);
     }
