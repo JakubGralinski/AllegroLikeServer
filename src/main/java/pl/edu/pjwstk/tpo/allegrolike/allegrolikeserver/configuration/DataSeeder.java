@@ -49,16 +49,16 @@ public class DataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        System.out.println("Data Seeder is running...");
+        logger.info("Data Seeder is running...");
 
         User testUser;
         if (userRepository.count() == 0) {
-            System.out.println("Seeding user...");
+            logger.info("Seeding user...");
             testUser = new User("testuser", "test@example.com", passwordEncoder.encode("password"));
             testUser.setRole(Role.ROLE_USER);
             userRepository.save(testUser);
         } else {
-            System.out.println("Users already exist. Getting the first user for seeding products/orders.");
+            logger.info("Users already exist. Getting the first user for seeding products/orders.");
             testUser = userRepository.findAll().get(0);
         }
 
