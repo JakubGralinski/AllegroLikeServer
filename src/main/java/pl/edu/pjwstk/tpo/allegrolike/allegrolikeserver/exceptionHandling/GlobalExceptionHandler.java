@@ -4,12 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.badrequest.BadRequestException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.forbidden.ForbiddenException;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notacceptable.NotAcceptableException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 
 @RestControllerAdvice
@@ -52,6 +55,27 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public String handleNotSupportedHttpMethodException(HttpRequestMethodNotSupportedException ex) {
+        log.info(ex.getMessage());
+        return "This request method is not supported on this path";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ExceptionHandler(NotAcceptableException.class)
+    public String handleNotAcceptableException(NotAcceptableException ex) {
+        log.info(ex.getMessage());
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public String handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        log.info(ex.getMessage());
+        return ex.getMessage();
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public String handleServerException(Exception ex) {
@@ -59,5 +83,4 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return "Internal server error occurred, please try again later";
     }
-
 }

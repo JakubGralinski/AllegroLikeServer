@@ -1,6 +1,7 @@
 package pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class CreateCategoryRequestDto {
 
