@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.requests.CreateAddressRequestDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.dtos.responses.OrderResponseDto;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.badrequest.NotEnoughProductInStockException;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notacceptable.NotAcceptableException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.exceptions.notfound.NotFoundException;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.mappers.OrderMapper;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
@@ -18,6 +19,7 @@ import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.CartService;
 import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.services.OrderService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
         final var order = new Order();
         order.setUser(user);
         order.setStatus(OrderStatus.PLACED);
+        order.setPlacedAt(LocalDate.now());
 
         var totalPrice = BigDecimal.ZERO;
 
@@ -92,6 +95,9 @@ public class OrderServiceImpl implements OrderService {
             final var createdAddress = addressService.createAddress(shippingAddress);
             order.setShippingAddress(createdAddress);
         } else {
+            if (user.getAddress() == null) {
+                throw new NotAcceptableException("User does not have an address in their profile");
+            }
             order.setShippingAddress(user.getAddress());
         }
 
@@ -139,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> getAllOrdersByUserId(Long userId) {
         ServiceSecUtils.assertUserIsEligibleToManageThisAccount(userId);
 
-        final var orders = orderRepository.findAll();
+        final var orders = orderRepository.findByUserId(userId);
         return orders.stream().map(orderMapper::mapToOrderResponseDto).toList();
     }
 }
