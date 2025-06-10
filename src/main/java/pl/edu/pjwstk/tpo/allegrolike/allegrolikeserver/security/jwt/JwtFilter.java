@@ -36,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                                     .loadUserByUsername(this.jwtProvider
                                                                             .getUsernameFromToken(jwtToken));
 
-                final Authentication  authentication = new UsernamePasswordAuthenticationToken(
+                final Authentication authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
                         userDetails.getAuthorities()
