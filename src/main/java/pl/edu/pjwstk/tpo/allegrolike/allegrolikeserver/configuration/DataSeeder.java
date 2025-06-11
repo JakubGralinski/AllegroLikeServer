@@ -8,8 +8,19 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.*;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.*;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Address;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Category;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderItem;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderStatus;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.AddressRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.CategoryRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -96,7 +107,7 @@ public class DataSeeder implements ApplicationRunner {
              products = productRepository.findAll();
         }
 
-        final var testAddress = new Address("testCity", "testCountry", "testStreet", 10);
+        final var testAddress = new Address("city", "country", "street", 10);
         addressRepository.save(testAddress);
 
         if (orderRepository.count() == 0 && !products.isEmpty()) {
