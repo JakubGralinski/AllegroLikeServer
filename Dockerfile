@@ -4,7 +4,7 @@ COPY . .
 RUN gradle clean bootJar
 
 FROM amazoncorretto:21-alpine
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl bash
 WORKDIR /server-app
 COPY --from=build /app-build/build/libs/*.jar server.jar
 COPY wait-for-it.sh .
