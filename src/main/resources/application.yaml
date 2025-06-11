@@ -2,7 +2,7 @@ spring:
   application:
     name: AllegroLikeServer
   datasource:
-    url: jdbc:mysql://localhost:3306/${MYSQL_DB:AllegroLikeDb}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${MYSQL_DB:AllegroLikeDb}
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -30,7 +30,8 @@ jwt:
   expiration-ms: ${JWT_EXPIRATION:86400000}
 
 cors:
-  client-origin: http://localhost:5173
+  client-origin: ${CLIENT_ORIGIN:http://localhost:5173}
+
 
 logging:
   level:

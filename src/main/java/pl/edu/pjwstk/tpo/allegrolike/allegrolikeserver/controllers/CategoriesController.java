@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-@PreAuthorize("hasRole('ADMIN')")
 public class CategoriesController {
 
     private final CategoryService categoryService;
@@ -45,6 +44,7 @@ public class CategoriesController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CreateCategoryRequestDto category) {
         final var response = this.categoryService.createCategory(category);
         final var uri = URI.create("/api/products/" + response.id());
@@ -53,6 +53,7 @@ public class CategoriesController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCategoryById(@PathVariable Long id) {
         if (!categoryService.deleteCategoryById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with id = " + id + " was not found");
@@ -62,6 +63,7 @@ public class CategoriesController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateCategory(
             @PathVariable Long id,
             @RequestBody UpdateCategoryRequestDto categoryRequestDto) {
