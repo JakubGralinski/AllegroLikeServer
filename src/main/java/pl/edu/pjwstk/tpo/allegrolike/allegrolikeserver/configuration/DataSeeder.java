@@ -8,17 +8,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Category;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Order;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderItem;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.OrderStatus;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Product;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.Role;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.User;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.CategoryRepository;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.OrderRepository;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.ProductRepository;
-import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.UserRepository;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.models.*;
+import pl.edu.pjwstk.tpo.allegrolike.allegrolikeserver.repositories.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,17 +24,19 @@ public class DataSeeder implements ApplicationRunner {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataSeeder(UserRepository userRepository,
+    public DataSeeder(UserRepository userRepository, AddressRepository addressRepository,
                       CategoryRepository categoryRepository,
                       ProductRepository productRepository,
                       OrderRepository orderRepository,
                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
@@ -103,6 +96,9 @@ public class DataSeeder implements ApplicationRunner {
              products = productRepository.findAll();
         }
 
+        final var testAddress = new Address("testCity", "testCountry", "testStreet", 10);
+        addressRepository.save(testAddress);
+
         if (orderRepository.count() == 0 && !products.isEmpty()) {
             System.out.println("Seeding orders...");
             Random random = new Random();
@@ -132,7 +128,7 @@ public class DataSeeder implements ApplicationRunner {
                         testUser,
                         OrderStatus.FULFILLED,
                         total,
-                        null
+                        testAddress
                 );
 
                 for(OrderItem item : currentOrderItems) {
