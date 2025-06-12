@@ -5,17 +5,16 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="4" author="jakubgralinski">
-        <createTable tableName="cart">
+    <changeSet id="8" author="jakubgralinski">
+        <createTable tableName="addresses">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="user_id" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP"/>
+            <column name="city" type="VARCHAR(20)"/>
+            <column name="country" type="VARCHAR(20)"/>
+            <column name="street" type="VARCHAR(20)"/>
+            <column name="house_number" type="INT"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="cart" baseColumnNames="user_id"
-            referencedTableName="user" referencedColumnNames="id"
-            constraintName="fk_cart_user"/>
     </changeSet>
 
 </databaseChangeLog> 

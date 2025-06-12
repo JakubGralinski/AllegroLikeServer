@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="5" author="jakubgralinski">
-        <createTable tableName="cart_item">
+        <createTable tableName="cart_items">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -14,12 +14,12 @@
             <column name="product_id" type="BIGINT"/>
             <column name="quantity" type="INT"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="cart_item" baseColumnNames="cart_id"
-            referencedTableName="cart" referencedColumnNames="id"
-            constraintName="fk_cartitem_cart"/>
-        <addForeignKeyConstraint baseTableName="cart_item" baseColumnNames="product_id"
-            referencedTableName="product" referencedColumnNames="id"
-            constraintName="fk_cartitem_product"/>
+        <addForeignKeyConstraint baseTableName="cart_items" baseColumnNames="cart_id"
+                                 referencedTableName="carts" referencedColumnNames="id"
+                                 constraintName="fk_cartitems_cart"/>
+        <addForeignKeyConstraint baseTableName="cart_items" baseColumnNames="product_id"
+                                 referencedTableName="products" referencedColumnNames="id"
+                                 constraintName="fk_cartitems_product"/>
     </changeSet>
 
 </databaseChangeLog> 

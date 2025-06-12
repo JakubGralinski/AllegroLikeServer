@@ -5,14 +5,13 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- Example: include other changelogs -->
-    <include file="db/changelog/changeset-001-create-user-table.xml"/>
-    <include file="db/changelog/changeset-002-create-category-table.xml"/>
-    <include file="db/changelog/changeset-003-create-product-table.xml"/>
-    <include file="db/changelog/changeset-004-create-cart-table.xml"/>
-    <include file="db/changelog/changeset-005-create-cartitem-table.xml"/>
-    <include file="db/changelog/changeset-006-create-order-table.xml"/>
-    <include file="db/changelog/changeset-007-create-orderitem-table.xml"/>
-    <include file="db/changelog/changeset-008-create-review-table.xml"/>
+    <include file="db/changelog/changeset-001-create-users-table.xml"/>
+    <include file="db/changelog/changeset-002-create-categories-table.xml"/>
+    <include file="db/changelog/changeset-003-create-products-table.xml"/>
+    <include file="db/changelog/changeset-004-create-carts-table.xml"/>
+    <include file="db/changelog/changeset-005-create-cart-items-table.xml"/>
+    <include file="db/changelog/changeset-006-create-orders-table.xml"/>
+    <include file="db/changelog/changeset-007-create-order-items-table.xml"/>
+    <include file="db/changelog/changeset-008-create-addresses-table.xml"/>
 
 </databaseChangeLog> 
