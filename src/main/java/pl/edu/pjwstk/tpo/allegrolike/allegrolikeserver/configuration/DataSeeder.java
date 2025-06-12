@@ -107,8 +107,13 @@ public class DataSeeder implements ApplicationRunner {
              products = productRepository.findAll();
         }
 
-        final var testAddress = new Address("city", "country", "street", 10);
-        addressRepository.save(testAddress);
+        Address testAddress;
+        if (addressRepository.count() == 0) {
+            testAddress = new Address("city", "country", "street", 10);
+            addressRepository.save(testAddress);
+        } else {
+            testAddress = addressRepository.findAll().getFirst();
+        }
 
         if (orderRepository.count() == 0 && !products.isEmpty()) {
             System.out.println("Seeding orders...");
