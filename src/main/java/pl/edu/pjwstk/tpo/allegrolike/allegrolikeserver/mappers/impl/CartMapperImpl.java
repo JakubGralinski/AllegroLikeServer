@@ -22,6 +22,9 @@ public class CartMapperImpl implements CartMapper {
 
     @Override
     public CartResponseDto mapToCartResponseDto(Cart cart) {
+        if (cart == null) {
+            return null;
+        }
         final var user = userMapper.mapEntityToResponseDto(cart.getUser());
         final var cartItems = cart.getItems()
                                   .stream()
